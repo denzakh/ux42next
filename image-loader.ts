@@ -7,8 +7,6 @@ export default function cloudflareLoader({
     width,
     quality,
 }: ImageLoaderProps) {
-    // Если мы в режиме разработки (npm run dev на Windows),
-    // отдаем оригинал без проксирования через Cloudflare
     if (process.env.NODE_ENV === 'development') {
         return src;
     }
@@ -17,34 +15,26 @@ export default function cloudflareLoader({
         return src;
     }
 
-    // Если картинка уже маленькая (например, иконка), отдаем оригинал
     if (width < 50) {
         return src;
     }
 
-    // Формируем параметры оптимизации
     const params = [`width=${width}`, 'format=auto'];
-    if (quality) {
-        params.push(`quality=${quality}`);
-    } else {
-        params.push('quality=75');
-    }
+    params.push(`quality=${quality || 75}`);
 
     const paramsString = params.join(',');
 
-    // Если это локальная статика из /public
+    // 1. Локальная статика (public/images/...)
     if (src.startsWith('/')) {
         return `/cdn-cgi/image/${paramsString}${src}`;
     }
 
-    // Если это картинка из R2 (внешний URL)
-    // Мы проксируем её через Cloudflare Images для сжатия
+    // 2. Внешние изображения из R2 (ux42.studio)
     if (src.startsWith(assetDomain)) {
-        // Убираем домен, оставляя только путь внутри бакета
-        const relativePath = src.replace(assetDomain, '');
-        return `/cdn-cgi/image/${paramsString}${relativePath}`;
+        // Добавляем '/' после параметров и передаем ПОЛНЫЙ src
+        // Результат будет: /cdn-cgi/image/width=1920.../https://assets.ux42.studio/terminator.jpg
+        return `/cdn-cgi/image/${paramsString}/${src}`;
     }
 
-    // 3. Для всего остального возвращаем как есть
     return src;
 }
