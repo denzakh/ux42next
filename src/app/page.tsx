@@ -38,7 +38,12 @@ export default function Home() {
                 <div className='m-4'>
                     <Image src='/images/promo.jpg' alt='' />
                 </div>
-                <div className='m-4'></div>
+                <div className='m-4'>
+                    <Image
+                        src='https://assets.ux42.studio/terminator.jpg'
+                        alt=''
+                    />
+                </div>
             </main>
             <footer className='row-start-3 flex gap-[24px] flex-wrap items-center justify-center'>
                 <a
