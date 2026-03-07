@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     images: {
         loader: 'custom',
         loaderFile: './image-loader.ts',
+        deviceSizes: [828, 1920],
         remotePatterns: [
             {
                 protocol: 'https',

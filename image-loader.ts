@@ -11,10 +11,21 @@ export default function cloudflareLoader({
         return src;
     }
 
+    if (src.endsWith('.svg')) {
+        return src;
+    }
+
+    // Если картинка уже маленькая (например, иконка), отдаем оригинал
+    if (width < 50) {
+        return src;
+    }
+
     // Формируем параметры оптимизации
     const params = [`width=${width}`, 'format=auto'];
     if (quality) {
         params.push(`quality=${quality}`);
+    } else {
+        params.push('quality=75');
     }
 
     const paramsString = params.join(',');
