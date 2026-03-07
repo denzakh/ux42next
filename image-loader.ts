@@ -1,5 +1,7 @@
 import type { ImageLoaderProps } from 'next/image';
 
+const assetDomain = 'https://assets.ux42.studio';
+
 export default function cloudflareLoader({
     src,
     width,
@@ -30,16 +32,16 @@ export default function cloudflareLoader({
 
     const paramsString = params.join(',');
 
-    // 1. Если это локальная статика из /public
+    // Если это локальная статика из /public
     if (src.startsWith('/')) {
         return `/cdn-cgi/image/${paramsString}${src}`;
     }
 
-    // 2. Если это картинка из R2 (внешний URL)
+    // Если это картинка из R2 (внешний URL)
     // Мы проксируем её через Cloudflare Images для сжатия
-    if (src.startsWith('https://assets.yourdomain.com')) {
+    if (src.startsWith(assetDomain)) {
         // Убираем домен, оставляя только путь внутри бакета
-        const relativePath = src.replace('https://assets.yourdomain.com', '');
+        const relativePath = src.replace(assetDomain, '');
         return `/cdn-cgi/image/${paramsString}${relativePath}`;
     }
 
